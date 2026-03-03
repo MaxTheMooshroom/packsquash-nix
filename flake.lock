@@ -176,6 +176,18 @@
         "type": "github"
       }
     },
+    "packsquash-overlay": {
+      "flake": false,
+      "locked": {
+        "path": "overlays/packsquash.nix",
+        "type": "path"
+      },
+      "original": {
+        "path": "overlays/packsquash.nix",
+        "type": "path"
+      },
+      "parent": []
+    },
     "root": {
       "inputs": {
         "flake-modules": "flake-modules",
@@ -188,6 +200,7 @@
         ],
         "package": "package",
         "packsquash": "packsquash",
+        "packsquash-overlay": "packsquash-overlay",
         "rust-nightly": "rust-nightly",
         "rust-overlay": "rust-overlay",
         "squash-pack": "squash-pack"

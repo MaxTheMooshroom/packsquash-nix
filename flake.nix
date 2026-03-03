@@ -8,6 +8,8 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
+    flake-modules.url = "github:MaxTheMooshroom/flake-modules";
+
     rust-nightly = {
       url = ./rust-nightly.nix;
       flake = false;
@@ -33,7 +35,10 @@
       flake = false;
     };
 
-    flake-modules.url = "github:MaxTheMooshroom/flake-modules";
+    packsquash-overlay = {
+      url = ./overlays/packsquash.nix;
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs-lib, flake-parts, ... }@inputs:
@@ -80,33 +85,7 @@
         overlays = {
           default = self.overlays.packsquash;
 
-          packsquash = _: super:
-            let
-              inherit (super) lib;
-              inherit (super.stdenv.hostPlatform) system;
-
-              mc-utils = super.mc-utils or (
-                lib.makeScope super.newScope (
-                  final: {
-                    packages = lib.makeScope final.newScope (_: {});
-
-                    lib = lib.makeScope final.newScope (_: {});
-                  }
-                )
-              );
-            in {
-              mc-utils = mc-utils.overrideScope (final: prev: {
-                packages = prev.packages.overrideScope (final': prev': {
-                  packsquash = self.packages.${system}.packsquash;
-                });
-
-                lib = prev.lib.overrideScope (final': prev': {
-                  mkSquashConfig = super.callPackage self.lib.mkSquashConfig {};
-
-                  squashPack = super.callPackage self.lib.squashPack {};
-                });
-              });
-            };
+          packsquash = (import self.inputs.packsquash-overlay) self;
         };
       };
     };
